@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="sendEthereum">
+     <div class="image">
+        <img src="./assets/eth_logo.svg">
+     </div>
+     <div class="address">
+        <button mat-stroked-button disabled color="primary">{{address}}</button>
+     </div>
+     <div class="amount">
+       <span>{{amount}}</span><span> ETH</span>
+     </div>
+     </div>
+     <div *ngIf="!sendEther" class="buttons">
+        <button mat-raised-button color="primary" (click)="deposit()">Deposit</button>
+        <button mat-raised-button color="primary" (click)="sendToggle()">Send</button>
+     </div>
+     <div *ngIf="sendEther" class="send">
+        <div>
+       <mat-form-field>
+       <input [(ngModel)]="reciepient" type="text" matInput placeholder="reciepient address">
+      </mat-form-field>
+      </div>
+     <div>
+      <mat-form-field>
+        <input [(ngModel)]="sendAmount" type="number" matInput placeholder="amount in Ether">
+         </mat-form-field>
+      </div>
+      
+       <div class="confirmSend">
+       <button mat-raised-button color="primary" (click)="sendToggle()">Cancel</button>
+       <button mat-raised-button color="primary" (click)="sendEtherTo()">Send</button>
+      </div>
+     </div>
+  <div class="history">
+     <mat-list>
+        <mat-list-item *ngFor="let transaction of transactions">
+           <h4 mat-line>Reciever Address: {{transaction.reciepient}}</h4>
+           <p mat-line>Amount sent {{transaction.amount}}Ether</p>
+           <p mat-line>Transaction Hash{{transaction.hash}}</p>
+           <mat-divider></mat-divider>
+        </mat-list-item>
+     </mat-list>
+  </div>
+</div>

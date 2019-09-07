@@ -1,0 +1,28 @@
+<div class="register-form">
+  <form [formGroup]="accountDetailsForm" novalidate (ngSubmit)="register(accountDetailsForm.value)">
+    <mat-form-field class="full-width">
+      <input matInput type="email" placeholder="Email" formControlName="email" required>
+      <mat-error *ngFor="let validation of account_validation_messages.email">
+        <mat-error class="error-message" *ngIf="accountDetailsForm.get('email').hasError(validation.type) && (accountDetailsForm.get('email').dirty || accountDetailsForm.get('email').touched)">{{validation.message}}</mat-error>
+      </mat-error>
+    </mat-form-field>
+    <div formGroupName="matching_passwords">
+      <mat-form-field class="full-width">
+        <input matInput type="password" placeholder="Password" formControlName="password" required>
+        <mat-error *ngFor="let validation of account_validation_messages.password">
+          <mat-error class="error-message" *ngIf="accountDetailsForm.get('matching_passwords').get('password').hasError(validation.type) && (accountDetailsForm.get('matching_passwords').get('password').dirty || accountDetailsForm.get('matching_passwords').get('password').touched)">{{validation.message}}</mat-error>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput type="password" placeholder="Confirm Password" formControlName="confirm_password"  [errorStateMatcher]="parentErrorStateMatcher" required>
+        <mat-error *ngFor="let validation of account_validation_messages.confirm_password">
+          <mat-error class="error-message" *ngIf="(accountDetailsForm.get('matching_passwords').get('confirm_password').hasError(validation.type)|| accountDetailsForm.get('matching_passwords').hasError(validation.type)) && (accountDetailsForm.get('matching_passwords').get('confirm_password').dirty || accountDetailsForm.get('matching_passwords').get('confirm_password').touched)">{{validation.message}}</mat-error>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <button class="submit-btn" color="accent" mat-raised-button type="submit" [disabled]="!accountDetailsForm.valid">
+      Register
+    </button>
+  </form>
+</div>

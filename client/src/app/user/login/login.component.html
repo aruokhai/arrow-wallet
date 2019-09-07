@@ -1,0 +1,44 @@
+<div class="login-form">
+  <!-- login form -->
+  <form (ngSubmit)="login()">
+    <!-- email field -->
+      <mat-form-field class="form-group input-full-width">
+          <input id="email" matInput type="email"
+                 class ="form-control"
+                 placeholder="Email"
+                 required
+                 name="email"
+                 pattern="^[A-Za-z+-.%0-9]+\@[A-Za-z]+\.[A-Za-z]{2,63}$"
+                 #emailField="ngModel"
+                 [(ngModel)]="email">
+          <mat-error class="error" *ngIf="(emailField.dirty || message) && emailField.invalid">
+            <mat-error *ngIf="emailField.errors.required">
+                Email is required
+            </mat-error>
+            <mat-error *ngIf="emailField.errors.pattern">
+                  Email does not seem to be valid
+            </mat-error>
+          </mat-error>
+      </mat-form-field>
+    <!-- password field -->
+    <mat-form-field class="form-group input-full-width">
+      <input id='password' matInput class="form-control"
+         type="password"
+         placeholder="Password"
+         required
+         name="password"
+         #passwordField="ngModel"
+         [(ngModel)]="password">
+      <mat-error *ngIf="passwordField.errors && passwordField.errors.required">Password is Mandatory</mat-error>
+    </mat-form-field>
+    <div class="form-group">
+      <button mat-raised-button color="accent" [disabled]="!password" class="btnSubmit" type="submit">Login</button>
+    </div>
+  </form>
+  <div >
+      <button mat-button (click)="forgotPassword()">
+      Forget Password
+      </button>
+    </div>
+    <div> {{forget_message}}</div>
+</div>

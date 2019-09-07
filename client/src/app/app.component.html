@@ -1,0 +1,40 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav class="sidenav"   
+      hasBackdrop = "true"
+      mode = 'push'>
+    <mat-toolbar>Arrow Wallet</mat-toolbar>
+    <mat-nav-list class="links">
+      <a mat-list-item routerLink="/home" (click)="sidenav.toggle()"
+      routerLinkActive="active" class="sidenav-option">Home</a> 
+      <mat-divider></mat-divider>
+            <a mat-list-item routerLink="/user/login" (click)="sidenav.toggle()"
+            routerLinkActive="active" class="sidenav-option">Login</a>
+            <mat-divider></mat-divider>    
+            <a mat-list-item routerLink="/user/register" (click)="sidenav.toggle()"
+            routerLinkActive="active" class="sidenav-option">Register</a>
+            <mat-divider></mat-divider>
+              <mat-divider></mat-divider>
+            <!-- <a mat-list-item routerLink="/professionals/estate" (click)="[sidenav.toggle(), openSnackBar('Welcome To Professionals List')]"
+            routerLinkActive="active">Professionals</a> -->
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="mat-toolbar">
+      <button 
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="sidenav.toggle()"
+        >
+        <mat-icon aria-label="Side nav toggle icon" class="menu">menu</mat-icon>
+      </button><span class="title">arrowWalet</span>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+    <div *ngIf="loading" class="loading-indicator">
+    <mat-spinner  color="accent"></mat-spinner>
+    </div>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
