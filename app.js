@@ -29,14 +29,14 @@ app.post("/api/login", function(req,res){
         res.status(200).send({
             value });
         }).catch((err) => {
-        res.status(504).send({err});
+        res.status(400).send({err});
     
 })
 });
 app.post("/api/getAccountDetails",function(req,res){
     client.hgetall(req.body.email,function(err,result){
         console.log(req.body.email+"my email");
-        if (err)return res.status(504).send({err});
+        if (err)return res.status(400).send({err});
         let seed = result.seed
         generateProvider(seed,1,result.password).then((result2) => {
             console.log(result2);
@@ -54,7 +54,7 @@ app.post("/api/getAccountDetails",function(req,res){
            
            
         }).catch((err) => {
-            res.status(504).send({err});
+            res.status(500).send({err});
             console.log(err);
         });
     
@@ -62,10 +62,10 @@ app.post("/api/getAccountDetails",function(req,res){
 })
 app.post("/api/deposit",function(req,res){
     client.hgetall(req.body.email,function(err,result){
-        if (err)return res.status(504).send({err});
+        if (err)return res.status(400).send({err});
         deposit(result.seed,1,result.password,Web3).then((result)=>{
             console.log(result);
-            res.send({hash:result});
+            res.status(200).send({hash:result});
         }).catch((err) => {
             console.log(err);
             res.status(200).send({err});
@@ -131,20 +131,27 @@ async function generateAddresses(seed,noAddress,password){
 }
 
 async function generateProvider(seed,noAddress,password){
-   let accountDetails = await generateAddresses(seed,noAddress,password)
-    accountDetails.ks.passwordProvider = function (callback) {
-          callback(null, password);
-    };
+    try{
+        let accountDetails = await generateAddresses(seed,noAddress,password)
+        accountDetails.ks.passwordProvider = function (callback) {
+              callback(null, password);
+              provider = new HookedWeb3Provider({
+                host: "http://localhost:7545",
+                transaction_signer: ks
+          });
+      
+         return {provider,accountDetails};
+            };
+    }catch(err){
+      throw new Error(err);
+    }
+  
 
-    provider = new HookedWeb3Provider({
-          host: "http://localhost:7545",
-          transaction_signer: ks
-    });
-
-   return {provider,accountDetails};
+    
 }
 
 async function sendEthers(seed,noAddress,password,to,amount,web3Func){
+    try{
     let fullObject = await generateProvider(seed,noAddress,password);
     let provider = fullObject.provider
     let from = fullObject.accountDetails.yourAddress;
@@ -167,9 +174,14 @@ async function sendEthers(seed,noAddress,password,to,amount,web3Func){
             }
         })
     })
+}
+   catch(err){
+       throw new Error(err);
+   }
 };
 
 async function  deposit(seed,noAddress,password,web3Func){
+    try{
     let fullObject = await generateProvider(seed,noAddress,password);
     let provider = fullObject.provider;
     let to = fullObject.accountDetails.yourAddress;
@@ -193,6 +205,10 @@ async function  deposit(seed,noAddress,password,web3Func){
             }
         })
     });
+}
+catch(err){
+    throw new Error(err);
+}
 };
 
 function register(email,password,redisClient){

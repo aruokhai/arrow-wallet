@@ -1,0 +1,1 @@
+An ethereum cloud based HD Wallet using the MEAN stack

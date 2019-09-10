@@ -64,8 +64,10 @@ export class HomeComponent implements OnInit {
      if(this.allowedNoDeposit >= 0){
      this.userService.deposit(this.userStore.email).subscribe((resp) =>{
       if (resp.hash){
-      this.amount += 10 ;
-      this.allowedNoDeposit -=1;
+      this.amount = parseFloat(this.amount.toString()) + 10 ;
+
+      console.log(typeof(this.amount));
+      this.allowedNoDeposit  -= 1;
       let trans = {reciepient: this.address, amount:"10",hash: resp.hash};
       this.transactions.push(trans);
       this.openSnackBar("10 ether deposited in your acocunt");
