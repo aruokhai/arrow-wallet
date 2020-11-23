@@ -19,7 +19,7 @@ app.post("/api/register",function(req,res){
             value});
     }).catch((err)=>{
         console.log(err);
-        res.send({err
+        res.send({err : err.message
         });
     })
 })
@@ -50,6 +50,8 @@ app.post("/api/getAccountDetails",function(req,res){
                     balance : web3.utils.fromWei(balance),
                     privateKey
 })
+            }).catch(err => {
+                res.status(500).send(err.message);
             })
            
            
@@ -94,7 +96,7 @@ app.post("/api/sendEther",function(req,res){
 function connection(){
     app.listen(3000);
     client = redis.createClient({
-        port:6380
+        port:6379
     });
     client.on("error", function(err){
         console.log("Error "+ err);
@@ -131,27 +133,20 @@ async function generateAddresses(seed,noAddress,password){
 }
 
 async function generateProvider(seed,noAddress,password){
-    try{
-        let accountDetails = await generateAddresses(seed,noAddress,password)
-        accountDetails.ks.passwordProvider = function (callback) {
-              callback(null, password);
-              provider = new HookedWeb3Provider({
-                host: "http://localhost:7545",
-                transaction_signer: ks
-          });
-      
-         return {provider,accountDetails};
-            };
-    }catch(err){
-      throw new Error(err);
-    }
-  
+   let accountDetails = await generateAddresses(seed,noAddress,password)
+    accountDetails.ks.passwordProvider = function (callback) {
+          callback(null, password);
+    };
 
-    
+    provider = new HookedWeb3Provider({
+          host: "http://localhost:7545",
+          transaction_signer: ks
+    });
+
+   return {provider,accountDetails};
 }
 
 async function sendEthers(seed,noAddress,password,to,amount,web3Func){
-    try{
     let fullObject = await generateProvider(seed,noAddress,password);
     let provider = fullObject.provider
     let from = fullObject.accountDetails.yourAddress;
@@ -165,7 +160,8 @@ async function sendEthers(seed,noAddress,password,to,amount,web3Func){
             gas: 21000
         }, function(error, result){
             if(error)
-            {	
+            {  
+                console.log(error);	
                reject("cant send transaction");
             }
             else
@@ -174,21 +170,16 @@ async function sendEthers(seed,noAddress,password,to,amount,web3Func){
             }
         })
     })
-}
-   catch(err){
-       throw new Error(err);
-   }
 };
 
 async function  deposit(seed,noAddress,password,web3Func){
-    try{
     let fullObject = await generateProvider(seed,noAddress,password);
     let provider = fullObject.provider;
     let to = fullObject.accountDetails.yourAddress;
+    let  web3 = new web3Func(provider);
+    let from = await web3.eth.getAccounts();
+    let value =  web3.utils.toWei("10");
     return new Promise(async function(resolve,reject){
-        let  web3 = new web3Func(provider);
-        let from = await web3.eth.getAccounts();
-        let value =  web3.utils.toWei("10");
         web3.eth.sendTransaction({
             from: from[0],
             to,
@@ -205,10 +196,6 @@ async function  deposit(seed,noAddress,password,web3Func){
             }
         })
     });
-}
-catch(err){
-    throw new Error(err);
-}
 };
 
 function register(email,password,redisClient){
@@ -233,8 +220,6 @@ function register(email,password,redisClient){
 async function login(email,password,redisClient){
     return new Promise(function(resolve,reject){
     redisClient.hgetall(email,function(err,result){
-        console.log(result.seed+ "seed");
-
         if (err)reject(err);
         if(result == null)reject("invalid email");
         //console.log(password)

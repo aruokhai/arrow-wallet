@@ -78,7 +78,7 @@ describe('Basic function', function() {
     });
   });
   describe("app.js integeration test", function(){
-     before(function(done){   
+     before( function(done){   
      seed = "dress outdoor unique pumpkin chair excess hedgehog quick blanket kitten tooth addict"
       fake_password = 12345
       no_address = 1
@@ -109,8 +109,9 @@ describe('Basic function', function() {
    
                 var web3 = new Web3(provider);
    
-                var from = "0xD25cF0Be287B68a49Dd2bEcA5d408F4A95269999"
-
+               web3.eth.getAccounts().then(result =>{
+                var from = result[0];
+                  
                var to = "364e758fbfc7c5bd98673ca6094934a57bc5f357"
                var value = web3.utils.toWei("10", "ether");
    
@@ -130,6 +131,7 @@ describe('Basic function', function() {
                    }
 
                 })
+               })
              }
            });
 
